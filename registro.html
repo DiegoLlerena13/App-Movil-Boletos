@@ -66,6 +66,15 @@
     <script src="js/db.js"></script>
     <script src="js/ui.js"></script>
     <script>
+        // ✅ INICIALIZAR DATOS AL CARGAR LA PÁGINA
+        window.addEventListener('load', async () => {
+            try {
+                await initializeDefaultData();
+            } catch (error) {
+                console.error('Error al inicializar datos:', error);
+            }
+        });
+
         document.getElementById('registroForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -83,6 +92,13 @@
 
             if (usuario.length < 3) {
                 errorMessage.textContent = 'El usuario debe tener al menos 3 caracteres';
+                errorMessage.style.display = 'block';
+                return;
+            }
+
+            // ✅ VALIDAR QUE NO USE admin
+            if (usuario.toLowerCase() === 'admin') {
+                errorMessage.textContent = 'El usuario "admin" está reservado';
                 errorMessage.style.display = 'block';
                 return;
             }

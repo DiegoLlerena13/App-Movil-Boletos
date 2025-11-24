@@ -53,7 +53,6 @@
 
                 <button type="submit" class="btn btn-primary">Iniciar Sesión</button>
                 
-                <!-- BOTÓN SIEMPRE VISIBLE -->
                 <button type="button" id="btnCrearCuenta" class="btn btn-secondary">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
@@ -66,7 +65,8 @@
             </form>
 
             <div style="text-align: center; margin-top: 20px; color: var(--text-light); font-size: 12px;">
-                <p>© 2024 Boletos Travel. Todos los derechos reservados.</p>
+                <p>© 2025 Boletos Travel. Todos los derechos reservados.</p>
+                <p style="margin-top: 5px; font-size: 11px;">💡 Usa: <strong>admin</strong> / <strong>1234</strong></p>
             </div>
         </div>
     </div>
@@ -82,12 +82,12 @@
                 .catch(err => console.log('❌ Error:', err));
         }
 
-        // Botón crear cuenta SIEMPRE visible
+        // Botón crear cuenta
         document.getElementById('btnCrearCuenta').addEventListener('click', () => {
             window.location.href = 'registro.html';
         });
 
-        // Manejar login
+        // Manejar login con ADMIN FIJO
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -101,6 +101,19 @@
                 return;
             }
 
+            // ✅ VERIFICAR ADMIN FIJO PRIMERO
+            if (usuario === 'admin' && password === '1234') {
+                const adminUser = {
+                    usuario: 'admin',
+                    esAdmin: true,
+                    fechaRegistro: new Date().toISOString()
+                };
+                localStorage.setItem('usuarioActual', JSON.stringify(adminUser));
+                window.location.href = 'menu.html';
+                return;
+            }
+
+            // Si no es admin, verificar en la base de datos
             try {
                 const usuarios = await getAllFromStore('usuarios');
                 const user = usuarios.find(u => u.usuario === usuario && u.password === password);

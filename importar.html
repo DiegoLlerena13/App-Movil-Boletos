@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Importar JSON - Boletos Travel</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="navbar">
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <button class="btn-back-icon" onclick="window.location.href='menu.html'">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="19" y1="12" x2="5" y2="12"/>
+                    <polyline points="12 19 5 12 12 5"/>
+                </svg>
+            </button>
+            <h1>Importar Datos JSON</h1>
+        </div>
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <span style="font-size: 14px;">admin</span>
+            <div style="width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.3); display: flex; align-items: center; justify-content: center;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div style="background: var(--card-bg); padding: 30px; border-radius: 20px; box-shadow: 0 6px 20px rgba(193, 123, 92, 0.15);">
+            <h2 style="color: var(--primary); margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="7 10 12 15 17 10"/>
+                    <line x1="12" y1="15" x2="12" y2="3"/>
+                </svg>
+                Importar Datos desde JSON
+            </h2>
+
+            <div style="background: #FFF9F0; padding: 20px; border-radius: 12px; margin-bottom: 25px; border-left: 4px solid var(--warning);">
+                <h3 style="color: var(--text-dark); font-size: 16px; margin-bottom: 10px;">📋 Formato esperado del JSON:</h3>
+                <pre style="background: white; padding: 15px; border-radius: 8px; overflow-x: auto; font-size: 13px; line-height: 1.6; color: var(--text-dark);">{
+  "pasajeros": [
+    { "codigo": 1, "nombre": "Juan Pérez", "estadoRegistro": "A" }
+  ],
+  "cajeros": [
+    { "codigo": 1, "nombre": "BCP", "estadoRegistro": "A" }
+  ],
+  "destinos": [
+    { "codigo": 1, "nombre": "Lima", "estadoRegistro": "A" }
+  ],
+  "boletos": [
+    {
+      "numeroBoleto": 1,
+      "fechaViaje": "2025-01-15",
+      "pasajero": 1,
+      "pasajeroNombre": "Juan Pérez",
+      "destino": 1,
+      "destinoNombre": "Lima",
+      "asiento": "A12",
+      "monto": "85.00",
+      "cajero": 1,
+      "cajeroNombre": "BCP",
+      "estadoRegistro": "A"
+    }
+  ]
+}</pre>
+            </div>
+
+            <div class="form-group">
+                <label style="font-size: 16px; font-weight: 700; margin-bottom: 12px; display: block;">
+                    📁 Seleccionar archivo JSON:
+                </label>
+                <input type="file" id="jsonFile" accept=".json" style="padding: 12px; border: 2px dashed var(--primary); border-radius: 12px; background: white; width: 100%; cursor: pointer;">
+            </div>
+
+            <div style="display: flex; gap: 12px; margin-top: 25px;">
+                <button onclick="importJSON()" class="btn btn-primary" style="flex: 1;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                        <polyline points="7 10 12 15 17 10"/>
+                        <line x1="12" y1="15" x2="12" y2="3"/>
+                    </svg>
+                    Importar Datos
+                </button>
+                <button onclick="window.location.href='menu.html'" class="btn btn-secondary" style="width: auto; padding: 16px 24px;">
+                    Cancelar
+                </button>
+            </div>
+
+            <div id="resultMessage" style="display: none; margin-top: 25px; padding: 20px; border-radius: 12px;"></div>
+        </div>
+
+        <!-- Información adicional -->
+        <div style="margin-top: 30px; padding: 20px; background: var(--card-bg); border-radius: 15px;">
+            <h3 style="color: var(--primary); margin-bottom: 15px; font-size: 16px;">ℹ️ Instrucciones:</h3>
+            <ul style="color: var(--text-dark); line-height: 1.8; padding-left: 20px;">
+                <li>Selecciona un archivo JSON con el formato indicado arriba</li>
+                <li>Los datos se <strong>agregarán o actualizarán</strong> (no se borran los existentes)</li>
+                <li>Asegúrate de que los códigos sean únicos</li>
+                <li>El estado puede ser: <code>A</code> (Activo), <code>I</code> (Inactivo), <code>*</code> (Eliminado)</li>
+                <li>Los boletos deben tener códigos válidos de pasajeros, destinos y cajeros</li>
+            </ul>
+        </div>
+    </div>
+
+    <script src="js/db.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        // Verificar autenticación
+        checkAuth();
+
+        async function importJSON() {
+            const fileInput = document.getElementById('jsonFile');
+            const resultMessage = document.getElementById('resultMessage');
+            
+            if (!fileInput.files || fileInput.files.length === 0) {
+                showMessage('⚠️ Por favor selecciona un archivo JSON', 'warning');
+                return;
+            }
+
+            const file = fileInput.files[0];
+            
+            if (!file.name.endsWith('.json')) {
+                showMessage('⚠️ Por favor selecciona un archivo .json válido', 'warning');
+                return;
+            }
+
+            try {
+                showMessage('⏳ Leyendo archivo...', 'info');
+                
+                const text = await file.text();
+                console.log('Contenido del archivo leído:', text.substring(0, 200) + '...');
+                
+                showMessage('⏳ Importando datos a la base de datos...', 'info');
+                
+                const result = await importFromJSON(text);
+                
+                const total = result.pasajeros + result.cajeros + result.destinos + result.boletos;
+                
+                if (total === 0) {
+                    showMessage('⚠️ No se importaron datos. Verifica el formato del JSON', 'warning');
+                } else {
+                    const message = `
+                        <strong>✅ Datos importados exitosamente:</strong><br><br>
+                        📋 ${result.pasajeros} pasajeros<br>
+                        💰 ${result.cajeros} cajeros<br>
+                        📍 ${result.destinos} destinos<br>
+                        🎫 ${result.boletos} boletos<br><br>
+                        <strong>Total: ${total} registros</strong><br><br>
+                        <em>Redirigiendo al menú principal...</em>
+                    `;
+                    showMessage(message, 'success');
+                    
+                    // Limpiar input
+                    fileInput.value = '';
+                    
+                    // Redirigir después de 3 segundos
+                    setTimeout(() => {
+                        window.location.href = 'menu.html';
+                    }, 3000);
+                }
+            } catch (error) {
+                console.error('Error detallado:', error);
+                showMessage(`❌ Error al importar el archivo: ${error.message || 'Formato incorrecto'}`, 'error');
+            }
+        }
+
+        function showMessage(message, type) {
+            const resultMessage = document.getElementById('resultMessage');
+            resultMessage.style.display = 'block';
+            resultMessage.innerHTML = message;
+            
+            // Estilos según tipo
+            switch(type) {
+                case 'success':
+                    resultMessage.style.background = 'rgba(107, 142, 111, 0.15)';
+                    resultMessage.style.color = '#6B8E6F';
+                    resultMessage.style.borderLeft = '4px solid #6B8E6F';
+                    break;
+                case 'error':
+                    resultMessage.style.background = 'rgba(200, 90, 84, 0.15)';
+                    resultMessage.style.color = '#C85A54';
+                    resultMessage.style.borderLeft = '4px solid #C85A54';
+                    break;
+                case 'warning':
+                    resultMessage.style.background = 'rgba(232, 168, 124, 0.15)';
+                    resultMessage.style.color = '#E8A87C';
+                    resultMessage.style.borderLeft = '4px solid #E8A87C';
+                    break;
+                case 'info':
+                    resultMessage.style.background = 'rgba(193, 123, 92, 0.15)';
+                    resultMessage.style.color = '#C17B5C';
+                    resultMessage.style.borderLeft = '4px solid #C17B5C';
+                    break;
+            }
+        }
+
+        // Limpiar mensaje al cambiar archivo
+        document.getElementById('jsonFile').addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                const fileName = e.target.files[0].name;
+                console.log('Archivo seleccionado:', fileName);
+                document.getElementById('resultMessage').style.display = 'none';
+            }
+        });
+
+        // Permitir importar con Enter en el input de archivo
+        document.getElementById('jsonFile').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && e.target.files.length > 0) {
+                importJSON();
+            }
+        });
+
+        // Log inicial para verificar que el script se cargó
+        console.log('✓ Script de importación cargado correctamente');
+    </script>
+</body>
+</html>
