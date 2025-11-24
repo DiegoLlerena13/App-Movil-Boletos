@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menú Principal - Boletos Travel</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="navbar">
+        <div>
+            <h1>Boletos Travel</h1>
+            <p id="welcomeMessage"></p>
+        </div>
+        <button class="btn-logout" onclick="logout()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                <polyline points="16 17 21 12 16 7"/>
+                <line x1="21" y1="12" x2="9" y2="12"/>
+            </svg>
+            Salir
+        </button>
+    </div>
+
+    <div class="container">
+        <h2 class="section-title">Menú Principal</h2>
+        
+        <div class="menu-grid-mobile">
+            <a href="pasajeros.html" class="menu-card-mobile">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#C17B5C" stroke-width="2">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                    <circle cx="9" cy="7" r="4"/>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                </svg>
+                <div class="menu-card-title">Pasajeros</div>
+            </a>
+
+            <a href="cajeros.html" class="menu-card-mobile">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#C17B5C" stroke-width="2">
+                    <line x1="12" y1="1" x2="12" y2="23"/>
+                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                </svg>
+                <div class="menu-card-title">Cajeros</div>
+            </a>
+
+            <a href="destinos.html" class="menu-card-mobile">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#C17B5C" stroke-width="2">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                    <circle cx="12" cy="10" r="3"/>
+                </svg>
+                <div class="menu-card-title">Destinos</div>
+            </a>
+
+            <a href="boletos.html" class="menu-card-mobile">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#C17B5C" stroke-width="2">
+                    <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/>
+                    <path d="M13 5v2"/>
+                    <path d="M13 17v2"/>
+                    <path d="M13 11v2"/>
+                </svg>
+                <div class="menu-card-title">Boletos</div>
+            </a>
+        </div>
+
+        <!-- Información adicional -->
+        <div style="margin-top: 40px; padding: 20px; background: white; border-radius: 15px; text-align: center;">
+            <h3 style="color: var(--primary); margin-bottom: 10px; font-size: 18px;">Sistema de Gestión de Boletos</h3>
+            <p style="color: var(--text-light); font-size: 13px;">
+                Aplicación móvil progresiva para la gestión integral de viajes.
+            </p>
+            <div style="display: flex; justify-content: center; gap: 10px; margin-top: 15px; flex-wrap: wrap;">
+                <span class="badge badge-success">✓ PWA</span>
+                <span class="badge badge-primary">✓ Offline</span>
+                <span class="badge badge-success">✓ Responsive</span>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script>
+        checkAuth();
+        const usuario = JSON.parse(localStorage.getItem('usuarioActual'));
+        if (usuario) {
+            document.getElementById('welcomeMessage').textContent = `Bienvenido, ${usuario.usuario}`;
+        }
+    </script>
+</body>
+</html>

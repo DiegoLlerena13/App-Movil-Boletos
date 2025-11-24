@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro - Boletos Travel</title>
+    <link rel="stylesheet" href="css/style.css">
+    <meta name="theme-color" content="#C17B5C">
+</head>
+<body>
+    <div class="container-login">
+        <div class="login-card">
+            <div class="login-header">
+                <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#C17B5C" stroke-width="2">
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                    <circle cx="8.5" cy="7" r="4"/>
+                    <line x1="20" y1="8" x2="20" y2="14"/>
+                    <line x1="23" y1="11" x2="17" y2="11"/>
+                </svg>
+                <h1>Crear Cuenta</h1>
+                <p>Regístrate en el sistema</p>
+            </div>
+
+            <form id="registroForm">
+                <div class="form-group">
+                    <label>
+                        <svg class="icon-small" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                            <circle cx="12" cy="7" r="4"/>
+                        </svg>
+                        Usuario
+                    </label>
+                    <input type="text" id="usuario" placeholder="Elige un nombre de usuario" required>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <svg class="icon-small" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                        </svg>
+                        Contraseña
+                    </label>
+                    <input type="password" id="password" placeholder="Mínimo 4 caracteres" required>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <svg class="icon-small" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                        </svg>
+                        Confirmar Contraseña
+                    </label>
+                    <input type="password" id="confirmPassword" placeholder="Repite tu contraseña" required>
+                </div>
+
+                <div id="errorMessage" class="error-message" style="display: none;"></div>
+
+                <button type="submit" class="btn btn-primary">Registrarse</button>
+                <button type="button" onclick="window.location.href='index.html'" class="btn btn-secondary">Volver al Login</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/db.js"></script>
+    <script src="js/ui.js"></script>
+    <script>
+        document.getElementById('registroForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const usuario = document.getElementById('usuario').value.trim();
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const errorMessage = document.getElementById('errorMessage');
+
+            // Validaciones
+            if (!usuario || !password || !confirmPassword) {
+                errorMessage.textContent = 'Por favor completa todos los campos';
+                errorMessage.style.display = 'block';
+                return;
+            }
+
+            if (usuario.length < 3) {
+                errorMessage.textContent = 'El usuario debe tener al menos 3 caracteres';
+                errorMessage.style.display = 'block';
+                return;
+            }
+
+            if (password.length < 4) {
+                errorMessage.textContent = 'La contraseña debe tener al menos 4 caracteres';
+                errorMessage.style.display = 'block';
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                errorMessage.textContent = 'Las contraseñas no coinciden';
+                errorMessage.style.display = 'block';
+                return;
+            }
+
+            try {
+                // Verificar si el usuario ya existe
+                const usuarios = await getAllFromStore('usuarios');
+                const exists = usuarios.find(u => u.usuario === usuario);
+
+                if (exists) {
+                    errorMessage.textContent = 'El usuario ya existe. Elige otro nombre.';
+                    errorMessage.style.display = 'block';
+                    return;
+                }
+
+                // Crear nuevo usuario
+                const newUser = { 
+                    usuario, 
+                    password,
+                    fechaRegistro: new Date().toISOString()
+                };
+                
+                await addToStore('usuarios', newUser);
+                
+                // Guardar sesión
+                localStorage.setItem('usuarioActual', JSON.stringify(newUser));
+                
+                // Redirigir al menú
+                alert('¡Cuenta creada exitosamente!');
+                window.location.href = 'menu.html';
+
+            } catch (error) {
+                console.error('Error al registrar:', error);
+                errorMessage.textContent = 'Error al crear la cuenta. Intenta nuevamente.';
+                errorMessage.style.display = 'block';
+            }
+        });
+
+        // Limpiar errores al escribir
+        ['usuario', 'password', 'confirmPassword'].forEach(id => {
+            document.getElementById(id).addEventListener('input', () => {
+                document.getElementById('errorMessage').style.display = 'none';
+            });
+        });
+    </script>
+</body>
+</html>
