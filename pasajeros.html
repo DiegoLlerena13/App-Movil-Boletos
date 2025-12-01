@@ -5,6 +5,208 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pasajeros - Boletos Travel</title>
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        .filter-tabs {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        .filter-tab {
+            flex: 1;
+            padding: 14px 20px;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+            color: var(--text-dark);
+        }
+        .filter-tab.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(193, 123, 92, 0.3);
+        }
+        .sort-controls {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 25px;
+            align-items: center;
+        }
+        .sort-label {
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+        .sort-btn {
+            padding: 12px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            background: white;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            color: var(--text-dark);
+        }
+        .sort-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        .pasajero-item {
+            background: linear-gradient(135deg, #FFF5E6 0%, #FFFFFF 100%);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(193, 123, 92, 0.15);
+            transition: all 0.3s ease;
+            border-left: 4px solid #E8A87C;
+        }
+        .pasajero-item:hover {
+            box-shadow: 0 6px 20px rgba(193, 123, 92, 0.25);
+            transform: translateY(-3px);
+            background: linear-gradient(135deg, #FFE8CC 0%, #FFFFFF 100%);
+        }
+        .pasajero-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .pasajero-icon {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #E8A87C 0%, #D4956B 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            flex-shrink: 0;
+        }
+        .pasajero-nombre {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+        .pasajero-actions {
+            display: flex;
+            gap: 8px;
+        }
+        .btn-action {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .btn-details {
+            background: #E8F4F8;
+            color: #2196F3;
+        }
+        .btn-details:hover {
+            background: #2196F3;
+            color: white;
+        }
+        .btn-edit {
+            background: #FFF4E6;
+            color: #FF9800;
+        }
+        .btn-edit:hover {
+            background: #FF9800;
+            color: white;
+        }
+        .btn-delete {
+            background: #FFEBEE;
+            color: #F44336;
+        }
+        .btn-delete:hover {
+            background: #F44336;
+            color: white;
+        }
+        .btn-reactivate {
+            background: #E8F5E9;
+            color: #4CAF50;
+        }
+        .btn-reactivate:hover {
+            background: #4CAF50;
+            color: white;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal.show {
+            display: flex;
+        }
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .modal-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        .btn-close {
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: #999;
+            line-height: 1;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+        }
+        .detail-row {
+            padding: 15px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .detail-label {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        .detail-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+        .empty-state svg {
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+    </style>
 </head>
 <body>
     <div class="navbar">
@@ -29,113 +231,366 @@
     </div>
 
     <div class="container">
+        <!-- Filtros: Activos / Papelera -->
         <div class="filter-tabs">
-            <button class="filter-tab active" data-filter="all" onclick="filterByStatus('all')">Todos</button>
-            <button class="filter-tab" data-filter="A" onclick="filterByStatus('A')">Activos</button>
-            <button class="filter-tab" data-filter="I" onclick="filterByStatus('I')">Inactivos</button>
-            <button class="filter-tab" data-filter="*" onclick="filterByStatus('*')">Papelera</button>
+            <button class="filter-tab active" onclick="changeFilter('activos')">
+                ✓ Activos
+            </button>
+            <button class="filter-tab" onclick="changeFilter('papelera')">
+                🗑️ Papelera
+            </button>
         </div>
 
-        <div class="search-box-container">
-            <div class="search-box">
-                <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="11" cy="11" r="8"/>
-                    <path d="m21 21-4.35-4.35"/>
-                </svg>
-                <input type="text" id="searchInput" placeholder="Buscar en pasajeros...">
+        <!-- Buscador -->
+        <div class="search-box" style="margin-bottom: 20px;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"/>
+                <path d="m21 21-4.35-4.35"/>
+            </svg>
+            <input type="text" id="searchInput" placeholder="Buscar pasajero..." onkeyup="filterPasajeros()">
+        </div>
+
+        <!-- Controles de ordenamiento -->
+        <div class="sort-controls">
+            <span class="sort-label">Ordenar por:</span>
+            <button class="sort-btn active" onclick="changeSortBy('codigo')">Código</button>
+            <button class="sort-btn" onclick="changeSortBy('nombre')">Nombre</button>
+            <span class="sort-label" style="margin-left: 15px;">Orden:</span>
+            <button class="sort-btn active" onclick="changeSortOrder('asc')">Ascendente</button>
+            <button class="sort-btn" onclick="changeSortOrder('desc')">Descendente</button>
+        </div>
+
+        <!-- Lista de pasajeros -->
+        <div id="pasajerosList"></div>
+    </div>
+
+    <!-- Botón flotante para agregar -->
+    <button class="btn-floating" onclick="showCreateModal()">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="12" y1="5" x2="12" y2="19"/>
+            <line x1="5" y1="12" x2="19" y2="12"/>
+        </svg>
+    </button>
+
+    <!-- Modal de Detalles -->
+    <div id="modalDetails" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Detalles del Pasajero</h2>
+                <button class="btn-close" onclick="closeModal('modalDetails')">&times;</button>
+            </div>
+            <div id="detailsContent"></div>
+        </div>
+    </div>
+
+    <!-- Modal de Editar Nombre -->
+    <div id="modalEdit" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Editar Nombre</h2>
+                <button class="btn-close" onclick="closeModal('modalEdit')">&times;</button>
+            </div>
+            <div class="form-group">
+                <label>Nombre completo</label>
+                <input type="text" id="editNombre" class="form-control" placeholder="Ingrese el nombre completo">
+            </div>
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button class="btn btn-primary" onclick="saveEdit()">Guardar Cambios</button>
+                <button class="btn btn-secondary" onclick="closeModal('modalEdit')">Cancelar</button>
             </div>
         </div>
+    </div>
 
-        <!-- ORDENAMIENTO MEJORADO -->
-        <div class="sort-container">
-            <button class="sort-button active" onclick="sortRecords('nombre-asc')">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="4" y1="6" x2="11" y2="6"/>
-                    <line x1="4" y1="12" x2="16" y2="12"/>
-                    <line x1="4" y1="18" x2="20" y2="18"/>
-                </svg>
-                A-Z
-            </button>
-            <button class="sort-button" onclick="sortRecords('nombre-desc')">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="4" y1="6" x2="20" y2="6"/>
-                    <line x1="4" y1="12" x2="16" y2="12"/>
-                    <line x1="4" y1="18" x2="11" y2="18"/>
-                </svg>
-                Z-A
-            </button>
-            <button class="sort-button" onclick="sortRecords('codigo-asc')">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <rect x="3" y="3" width="7" height="7"/>
-                    <rect x="14" y="3" width="7" height="7"/>
-                    <rect x="14" y="14" width="7" height="7"/>
-                    <rect x="3" y="14" width="7" height="7"/>
-                </svg>
-                Cód ↑
-            </button>
-            <button class="sort-button" onclick="sortRecords('codigo-desc')">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <rect x="3" y="3" width="7" height="7"/>
-                    <rect x="14" y="3" width="7" height="7"/>
-                    <rect x="14" y="14" width="7" height="7"/>
-                    <rect x="3" y="14" width="7" height="7"/>
-                </svg>
-                Cód ↓
-            </button>
-        </div>
-
-        <div id="listContainer"></div>
-        
-        <button class="fab" onclick="showForm()">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                <line x1="12" y1="5" x2="12" y2="19"/>
-                <line x1="5" y1="12" x2="19" y2="12"/>
-            </svg>
-        </button>
-
-        <div id="formModal" class="modal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2 id="formTitle">Nuevo Pasajero</h2>
-                    <button class="btn-close" onclick="closeForm()">×</button>
-                </div>
-                <form id="mainForm">
-                    <div class="form-group">
-                        <label>Código</label>
-                        <input type="number" id="codigo" readonly>
-                    </div>
-                    <div class="form-group">
-                        <label>Nombre Completo</label>
-                        <input type="text" id="nombre" placeholder="Ej: Juan Pérez García" required>
-                    </div>
-                    <div class="form-actions">
-                        <button type="submit" class="btn btn-success">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
-                                <polyline points="17 21 17 13 7 13 7 21"/>
-                                <polyline points="7 3 7 8 15 8"/>
-                            </svg>
-                            Guardar
-                        </button>
-                        <button type="button" class="btn btn-secondary" onclick="closeForm()">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <line x1="18" y1="6" x2="6" y2="18"/>
-                                <line x1="6" y1="6" x2="18" y2="18"/>
-                            </svg>
-                            Cancelar
-                        </button>
-                    </div>
-                </form>
+    <!-- Modal de Crear -->
+    <div id="modalCreate" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Nuevo Pasajero</h2>
+                <button class="btn-close" onclick="closeModal('modalCreate')">&times;</button>
+            </div>
+            <div class="form-group">
+                <label>Código</label>
+                <input type="number" id="createCodigo" class="form-control" placeholder="Código del pasajero">
+            </div>
+            <div class="form-group">
+                <label>Nombre completo</label>
+                <input type="text" id="createNombre" class="form-control" placeholder="Ingrese el nombre completo">
+            </div>
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button class="btn btn-primary" onclick="createPasajero()">Crear Pasajero</button>
+                <button class="btn btn-secondary" onclick="closeModal('modalCreate')">Cancelar</button>
             </div>
         </div>
     </div>
 
     <script src="js/db.js"></script>
     <script src="js/auth.js"></script>
-    <script src="js/mantenimiento.js"></script>
     <script>
         checkAuth();
-        initMantenimiento('pasajeros', ['codigo', 'nombre']);
+
+        let currentFilter = 'activos';
+        let sortBy = 'codigo';
+        let sortOrder = 'asc';
+        let currentEditCodigo = null;
+
+        // Cambiar filtro
+        function changeFilter(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+            loadPasajeros();
+        }
+
+        // Cambiar criterio de ordenamiento
+        function changeSortBy(criterion) {
+            sortBy = criterion;
+            document.querySelectorAll('.sort-btn').forEach(btn => {
+                if (btn.textContent.toLowerCase().includes('código') || btn.textContent.toLowerCase().includes('nombre')) {
+                    btn.classList.remove('active');
+                }
+            });
+            event.target.classList.add('active');
+            loadPasajeros();
+        }
+
+        // Cambiar orden
+        function changeSortOrder(order) {
+            sortOrder = order;
+            document.querySelectorAll('.sort-btn').forEach(btn => {
+                if (btn.textContent.toLowerCase().includes('ascendente') || btn.textContent.toLowerCase().includes('descendente')) {
+                    btn.classList.remove('active');
+                }
+            });
+            event.target.classList.add('active');
+            loadPasajeros();
+        }
+
+        // Cargar pasajeros
+        async function loadPasajeros() {
+            try {
+                const allPasajeros = await getAllFromStore('pasajeros');
+                
+                // Filtrar según estado
+                let filtered = allPasajeros.filter(p => {
+                    if (currentFilter === 'activos') return p.estadoRegistro === 'A';
+                    if (currentFilter === 'papelera') return p.estadoRegistro === '*';
+                    return false;
+                });
+
+                // Ordenar
+                filtered.sort((a, b) => {
+                    let compareA, compareB;
+                    
+                    if (sortBy === 'codigo') {
+                        compareA = a.codigo;
+                        compareB = b.codigo;
+                    } else {
+                        compareA = a.nombre.toLowerCase();
+                        compareB = b.nombre.toLowerCase();
+                    }
+
+                    if (sortOrder === 'asc') {
+                        return compareA > compareB ? 1 : -1;
+                    } else {
+                        return compareA < compareB ? 1 : -1;
+                    }
+                });
+
+                renderPasajeros(filtered);
+            } catch (error) {
+                console.error('Error al cargar pasajeros:', error);
+            }
+        }
+
+        // Renderizar lista
+        function renderPasajeros(pasajeros) {
+            const container = document.getElementById('pasajerosList');
+            
+            if (pasajeros.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                            <circle cx="12" cy="7" r="4"/>
+                        </svg>
+                        <h3>No hay pasajeros</h3>
+                        <p>${currentFilter === 'activos' ? 'Agrega un nuevo pasajero usando el botón +' : 'No hay pasajeros en la papelera'}</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = pasajeros.map(p => `
+                <div class="pasajero-item">
+                    <div class="pasajero-info">
+                        <div class="pasajero-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                <circle cx="12" cy="7" r="4"/>
+                            </svg>
+                        </div>
+                        <div class="pasajero-nombre">${p.nombre}</div>
+                    </div>
+                    <div class="pasajero-actions">
+                        <button class="btn-action btn-details" onclick="showDetails(${p.codigo})">Ver detalles</button>
+                        ${currentFilter === 'activos' ? `
+                            <button class="btn-action btn-edit" onclick="showEditModal(${p.codigo})">Editar</button>
+                            <button class="btn-action btn-delete" onclick="deletePasajero(${p.codigo})">Eliminar</button>
+                        ` : `
+                            <button class="btn-action btn-reactivate" onclick="reactivatePasajero(${p.codigo})">Reactivar</button>
+                        `}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Mostrar detalles
+        async function showDetails(codigo) {
+            const pasajero = await getFromStore('pasajeros', codigo);
+            const modal = document.getElementById('modalDetails');
+            const content = document.getElementById('detailsContent');
+            
+            const estadoTexto = pasajero.estadoRegistro === 'A' ? 'Activo' : 
+                               pasajero.estadoRegistro === 'I' ? 'Inactivo' : 'Eliminado';
+            
+            content.innerHTML = `
+                <div class="detail-row">
+                    <div class="detail-label">Código</div>
+                    <div class="detail-value">${pasajero.codigo}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Nombre Completo</div>
+                    <div class="detail-value">${pasajero.nombre}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Estado</div>
+                    <div class="detail-value">${estadoTexto}</div>
+                </div>
+            `;
+            
+            modal.classList.add('show');
+        }
+
+        // Mostrar modal de edición
+        async function showEditModal(codigo) {
+            currentEditCodigo = codigo;
+            const pasajero = await getFromStore('pasajeros', codigo);
+            document.getElementById('editNombre').value = pasajero.nombre;
+            document.getElementById('modalEdit').classList.add('show');
+        }
+
+        // Guardar edición
+        async function saveEdit() {
+            const nombre = document.getElementById('editNombre').value.trim();
+            
+            if (!nombre) {
+                alert('Por favor ingrese un nombre válido');
+                return;
+            }
+
+            try {
+                const pasajero = await getFromStore('pasajeros', currentEditCodigo);
+                pasajero.nombre = nombre;
+                await addToStore('pasajeros', pasajero);
+                
+                closeModal('modalEdit');
+                loadPasajeros();
+                alert('Nombre actualizado exitosamente');
+            } catch (error) {
+                console.error('Error al guardar:', error);
+                alert('Error al guardar los cambios');
+            }
+        }
+
+        // Eliminar (lógico)
+        async function deletePasajero(codigo) {
+            if (!confirm('¿Está seguro de eliminar este pasajero?')) return;
+            
+            try {
+                const pasajero = await getFromStore('pasajeros', codigo);
+                pasajero.estadoRegistro = '*';
+                await addToStore('pasajeros', pasajero);
+                loadPasajeros();
+                alert('Pasajero eliminado');
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al eliminar');
+            }
+        }
+
+        // Reactivar
+        async function reactivatePasajero(codigo) {
+            if (!confirm('¿Desea reactivar este pasajero?')) return;
+            
+            try {
+                const pasajero = await getFromStore('pasajeros', codigo);
+                pasajero.estadoRegistro = 'A';
+                await addToStore('pasajeros', pasajero);
+                loadPasajeros();
+                alert('Pasajero reactivado exitosamente');
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al reactivar');
+            }
+        }
+
+        // Mostrar modal de crear
+        function showCreateModal() {
+            document.getElementById('createCodigo').value = '';
+            document.getElementById('createNombre').value = '';
+            document.getElementById('modalCreate').classList.add('show');
+        }
+
+        // Crear pasajero
+        async function createPasajero() {
+            const codigo = parseInt(document.getElementById('createCodigo').value);
+            const nombre = document.getElementById('createNombre').value.trim();
+            
+            if (!codigo || !nombre) {
+                alert('Complete todos los campos');
+                return;
+            }
+
+            try {
+                const existe = await getFromStore('pasajeros', codigo);
+                if (existe) {
+                    alert('Ya existe un pasajero con ese código');
+                    return;
+                }
+
+                await addToStore('pasajeros', {
+                    codigo: codigo,
+                    nombre: nombre,
+                    estadoRegistro: 'A'
+                });
+
+                closeModal('modalCreate');
+                loadPasajeros();
+                alert('Pasajero creado exitosamente');
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al crear pasajero');
+            }
+        }
+
+        // Cerrar modal
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('show');
+        }
+
+        // Filtrar con búsqueda
+        function filterPasajeros() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const items = document.querySelectorAll('.pasajero-item');
+            
+            items.forEach(item => {
+                const nombre = item.querySelector('.pasajero-nombre').textContent.toLowerCase();
+                item.style.display = nombre.includes(search) ? 'flex' : 'none';
+            });
+        }
+
+        // Cargar al inicio
+        loadPasajeros();
     </script>
 </body>
 </html>

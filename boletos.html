@@ -5,6 +5,241 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Boletos - Boletos Travel</title>
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        .filter-tabs {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        .filter-tab {
+            flex: 1;
+            padding: 14px 20px;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+            color: var(--text-dark);
+        }
+        .filter-tab.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(193, 123, 92, 0.3);
+        }
+        .sort-controls {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 25px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .sort-label {
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+        .sort-btn {
+            padding: 12px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            background: white;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            color: var(--text-dark);
+        }
+        .sort-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        .boleto-item {
+            background: linear-gradient(135deg, #FFEBE6 0%, #FFFFFF 100%);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(200, 90, 84, 0.15);
+            transition: all 0.3s ease;
+            border-left: 4px solid #C85A54;
+        }
+        .boleto-item:hover {
+            box-shadow: 0 6px 20px rgba(200, 90, 84, 0.25);
+            transform: translateY(-3px);
+            background: linear-gradient(135deg, #FFD4CC 0%, #FFFFFF 100%);
+        }
+        .boleto-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex: 1;
+        }
+        .boleto-icon {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #C85A54 0%, #B34944 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            flex-shrink: 0;
+        }
+        .boleto-details {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .boleto-numero {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        .boleto-pasajero {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+        .boleto-destino {
+            font-size: 13px;
+            color: #666;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .boleto-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .btn-action {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .btn-details {
+            background: #E8F4F8;
+            color: #2196F3;
+        }
+        .btn-details:hover {
+            background: #2196F3;
+            color: white;
+        }
+        .btn-edit {
+            background: #FFF4E6;
+            color: #FF9800;
+        }
+        .btn-edit:hover {
+            background: #FF9800;
+            color: white;
+        }
+        .btn-delete {
+            background: #FFEBEE;
+            color: #F44336;
+        }
+        .btn-delete:hover {
+            background: #F44336;
+            color: white;
+        }
+        .btn-reactivate {
+            background: #E8F5E9;
+            color: #4CAF50;
+        }
+        .btn-reactivate:hover {
+            background: #4CAF50;
+            color: white;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal.show {
+            display: flex;
+        }
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .modal-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        .btn-close {
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: #999;
+            line-height: 1;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+        }
+        .detail-row {
+            padding: 15px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .detail-label {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        .detail-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+        .empty-state svg {
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+        @media (max-width: 768px) {
+            .boleto-item {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+            .boleto-actions {
+                width: 100%;
+            }
+            .btn-action {
+                flex: 1;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="navbar">
@@ -15,7 +250,7 @@
                     <polyline points="12 19 5 12 12 5"/>
                 </svg>
             </button>
-            <h1>Boletos de Viaje</h1>
+            <h1>Boletos</h1>
         </div>
         <div style="display: flex; align-items: center; gap: 10px;">
             <span style="font-size: 14px;">admin</span>
@@ -29,206 +264,503 @@
     </div>
 
     <div class="container">
+        <!-- Filtros: Activos / Papelera -->
         <div class="filter-tabs">
-            <button class="filter-tab active" data-filter="all" onclick="filterByStatusBoleto('all')">Todos</button>
-            <button class="filter-tab" data-filter="A" onclick="filterByStatusBoleto('A')">Activos</button>
-            <button class="filter-tab" data-filter="I" onclick="filterByStatusBoleto('I')">Inactivos</button>
-            <button class="filter-tab" data-filter="*" onclick="filterByStatusBoleto('*')">Papelera</button>
-        </div>
-
-        <div class="search-box-container">
-            <div class="search-box">
-                <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="11" cy="11" r="8"/>
-                    <path d="m21 21-4.35-4.35"/>
-                </svg>
-                <input type="text" id="searchInput" placeholder="Buscar boleto...">
-            </div>
-        </div>
-
-        <!-- ORDENAMIENTO AMPLIADO -->
-        <div class="sort-container-boletos">
-            <button class="sort-button active" onclick="sortBoletos('numeroBoleto-desc')">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <rect x="3" y="3" width="7" height="7"/>
-                    <rect x="14" y="3" width="7" height="7"/>
-                </svg>
-                N° ↓
+            <button class="filter-tab active" onclick="changeFilter('activos')">
+                ✓ Activos
             </button>
-            <button class="sort-button" onclick="sortBoletos('numeroBoleto-asc')">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <rect x="3" y="3" width="7" height="7"/>
-                    <rect x="14" y="3" width="7" height="7"/>
-                </svg>
-                N° ↑
-            </button>
-            <button class="sort-button" onclick="sortBoletos('fechaViaje-desc')">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <rect x="3" y="4" width="18" height="18" rx="2"/>
-                    <line x1="3" y1="10" x2="21" y2="10"/>
-                </svg>
-                Fecha ↓
-            </button>
-            <button class="sort-button" onclick="sortBoletos('fechaViaje-asc')">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <rect x="3" y="4" width="18" height="18" rx="2"/>
-                    <line x1="3" y1="10" x2="21" y2="10"/>
-                </svg>
-                Fecha ↑
-            </button>
-            <button class="sort-button" onclick="sortBoletos('monto-desc')">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="12" y1="1" x2="12" y2="23"/>
-                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
-                </svg>
-                $ ↓
-            </button>
-            <button class="sort-button" onclick="sortBoletos('monto-asc')">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="12" y1="1" x2="12" y2="23"/>
-                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
-                </svg>
-                $ ↑
-            </button>
-            <button class="sort-button" onclick="sortBoletos('destino-asc')">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                    <circle cx="12" cy="10" r="3"/>
-                </svg>
-                Dest A-Z
-            </button>
-            <button class="sort-button" onclick="sortBoletos('destino-desc')">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                    <circle cx="12" cy="10" r="3"/>
-                </svg>
-                Dest Z-A
+            <button class="filter-tab" onclick="changeFilter('papelera')">
+                🗑️ Papelera
             </button>
         </div>
 
-        <div id="listContainer"></div>
-        
-        <button class="fab" onclick="showFormBoleto()">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                <line x1="12" y1="5" x2="12" y2="19"/>
-                <line x1="5" y1="12" x2="19" y2="12"/>
+        <!-- Buscador -->
+        <div class="search-box" style="margin-bottom: 20px;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"/>
+                <path d="m21 21-4.35-4.35"/>
             </svg>
-        </button>
-
-        <!-- Modal de formulario de boleto -->
-        <div id="formModal" class="modal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2 id="formTitle">Nuevo Boleto</h2>
-                    <button class="btn-close" onclick="closeFormBoleto()">×</button>
-                </div>
-                <form id="boletoForm">
-                    <div class="form-group">
-                        <label>Número de Boleto</label>
-                        <input type="number" id="numeroBoleto" readonly>
-                    </div>
-                    <div class="form-group">
-                        <label>Fecha de Viaje</label>
-                        <input type="date" id="fechaViaje" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Pasajero</label>
-                        <div class="input-group">
-                            <input type="text" id="pasajeroNombre" readonly placeholder="Seleccione un pasajero">
-                            <button type="button" class="btn btn-primary" onclick="showSelector('pasajero')">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <circle cx="11" cy="11" r="8"/>
-                                    <path d="m21 21-4.35-4.35"/>
-                                </svg>
-                                Buscar
-                            </button>
-                        </div>
-                        <input type="hidden" id="pasajero">
-                    </div>
-                    <div class="form-group">
-                        <label>Destino</label>
-                        <div class="input-group">
-                            <input type="text" id="destinoNombre" readonly placeholder="Seleccione un destino">
-                            <button type="button" class="btn btn-primary" onclick="showSelector('destino')">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <circle cx="11" cy="11" r="8"/>
-                                    <path d="m21 21-4.35-4.35"/>
-                                </svg>
-                                Buscar
-                            </button>
-                        </div>
-                        <input type="hidden" id="destino">
-                    </div>
-                    <div class="form-group">
-                        <label>Número de Asiento</label>
-                        <input type="text" id="asiento" placeholder="Ej: A15" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Monto (S/)</label>
-                        <input type="number" step="0.01" id="monto" placeholder="Ej: 450.00" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Cajero</label>
-                        <div class="input-group">
-                            <input type="text" id="cajeroNombre" readonly placeholder="Seleccione un cajero">
-                            <button type="button" class="btn btn-primary" onclick="showSelector('cajero')">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <circle cx="11" cy="11" r="8"/>
-                                    <path d="m21 21-4.35-4.35"/>
-                                </svg>
-                                Buscar
-                            </button>
-                        </div>
-                        <input type="hidden" id="cajero">
-                    </div>
-                    <div class="form-actions">
-                        <button type="submit" class="btn btn-success">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
-                                <polyline points="17 21 17 13 7 13 7 21"/>
-                                <polyline points="7 3 7 8 15 8"/>
-                            </svg>
-                            Guardar
-                        </button>
-                        <button type="button" class="btn btn-secondary" onclick="closeFormBoleto()">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <line x1="18" y1="6" x2="6" y2="18"/>
-                                <line x1="6" y1="6" x2="18" y2="18"/>
-                            </svg>
-                            Cancelar
-                        </button>
-                    </div>
-                </form>
-            </div>
+            <input type="text" id="searchInput" placeholder="Buscar boleto..." onkeyup="filterBoletos()">
         </div>
 
-        <!-- Modal selector -->
-        <div id="selectorModal" class="modal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2 id="selectorTitle">Seleccionar</h2>
-                    <button class="btn-close" onclick="closeSelectorModal()">×</button>
-                </div>
-                <div style="padding: 20px;">
-                    <div class="search-box" style="margin-bottom: 20px;">
-                        <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="11" cy="11" r="8"/>
-                            <path d="m21 21-4.35-4.35"/>
-                        </svg>
-                        <input type="text" id="selectorSearch" placeholder="Buscar...">
-                    </div>
-                    <div id="selectorList"></div>
-                </div>
+        <!-- Controles de ordenamiento -->
+        <div class="sort-controls">
+            <span class="sort-label">Ordenar por:</span>
+            <button class="sort-btn active" onclick="changeSortBy('boleto')">Boleto</button>
+            <button class="sort-btn" onclick="changeSortBy('pasajero')">Pasajero</button>
+            <button class="sort-btn" onclick="changeSortBy('destino')">Destino</button>
+            <span class="sort-label" style="margin-left: 15px;">Orden:</span>
+            <button class="sort-btn active" onclick="changeSortOrder('asc')">Ascendente</button>
+            <button class="sort-btn" onclick="changeSortOrder('desc')">Descendente</button>
+        </div>
+
+        <!-- Lista de boletos -->
+        <div id="boletosList"></div>
+    </div>
+
+    <!-- Botón flotante para agregar -->
+    <button class="btn-floating" onclick="showCreateModal()">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="12" y1="5" x2="12" y2="19"/>
+            <line x1="5" y1="12" x2="19" y2="12"/>
+        </svg>
+    </button>
+
+    <!-- Modal de Detalles -->
+    <div id="modalDetails" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Detalles del Boleto</h2>
+                <button class="btn-close" onclick="closeModal('modalDetails')">&times;</button>
+            </div>
+            <div id="detailsContent"></div>
+        </div>
+    </div>
+
+    <!-- Modal de Editar -->
+    <div id="modalEdit" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Editar Boleto</h2>
+                <button class="btn-close" onclick="closeModal('modalEdit')">&times;</button>
+            </div>
+            <div class="form-group">
+                <label>Fecha de Viaje</label>
+                <input type="date" id="editFecha" class="form-control">
+            </div>
+            <div class="form-group">
+                <label>Pasajero</label>
+                <select id="editPasajero" class="form-control"></select>
+            </div>
+            <div class="form-group">
+                <label>Destino</label>
+                <select id="editDestino" class="form-control"></select>
+            </div>
+            <div class="form-group">
+                <label>Asiento</label>
+                <input type="text" id="editAsiento" class="form-control" placeholder="Ej: A12">
+            </div>
+            <div class="form-group">
+                <label>Monto (S/.)</label>
+                <input type="number" id="editMonto" class="form-control" step="0.01" placeholder="0.00">
+            </div>
+            <div class="form-group">
+                <label>Cajero</label>
+                <select id="editCajero" class="form-control"></select>
+            </div>
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button class="btn btn-primary" onclick="saveEdit()">Guardar Cambios</button>
+                <button class="btn btn-secondary" onclick="closeModal('modalEdit')">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Crear -->
+    <div id="modalCreate" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Nuevo Boleto</h2>
+                <button class="btn-close" onclick="closeModal('modalCreate')">&times;</button>
+            </div>
+            <div class="form-group">
+                <label>Número de Boleto</label>
+                <input type="number" id="createNumero" class="form-control" placeholder="Número del boleto">
+            </div>
+            <div class="form-group">
+                <label>Fecha de Viaje</label>
+                <input type="date" id="createFecha" class="form-control">
+            </div>
+            <div class="form-group">
+                <label>Pasajero</label>
+                <select id="createPasajero" class="form-control"></select>
+            </div>
+            <div class="form-group">
+                <label>Destino</label>
+                <select id="createDestino" class="form-control"></select>
+            </div>
+            <div class="form-group">
+                <label>Asiento</label>
+                <input type="text" id="createAsiento" class="form-control" placeholder="Ej: A12">
+            </div>
+            <div class="form-group">
+                <label>Monto (S/.)</label>
+                <input type="number" id="createMonto" class="form-control" step="0.01" placeholder="0.00">
+            </div>
+            <div class="form-group">
+                <label>Cajero</label>
+                <select id="createCajero" class="form-control"></select>
+            </div>
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button class="btn btn-primary" onclick="createBoleto()">Crear Boleto</button>
+                <button class="btn btn-secondary" onclick="closeModal('modalCreate')">Cancelar</button>
             </div>
         </div>
     </div>
 
     <script src="js/db.js"></script>
     <script src="js/auth.js"></script>
-    <script src="js/boletos.js"></script>
     <script>
         checkAuth();
-        initBoletos();
+
+        let currentFilter = 'activos';
+        let sortBy = 'boleto';
+        let sortOrder = 'asc';
+        let currentEditNumero = null;
+
+        function changeFilter(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+            loadBoletos();
+        }
+
+        function changeSortBy(criterion) {
+            sortBy = criterion;
+            document.querySelectorAll('.sort-btn').forEach(btn => {
+                if (btn.textContent.toLowerCase().includes('boleto') || 
+                    btn.textContent.toLowerCase().includes('pasajero') || 
+                    btn.textContent.toLowerCase().includes('destino')) {
+                    btn.classList.remove('active');
+                }
+            });
+            event.target.classList.add('active');
+            loadBoletos();
+        }
+
+        function changeSortOrder(order) {
+            sortOrder = order;
+            document.querySelectorAll('.sort-btn').forEach(btn => {
+                if (btn.textContent.toLowerCase().includes('ascendente') || 
+                    btn.textContent.toLowerCase().includes('descendente')) {
+                    btn.classList.remove('active');
+                }
+            });
+            event.target.classList.add('active');
+            loadBoletos();
+        }
+
+        async function loadBoletos() {
+            try {
+                const allBoletos = await getAllFromStore('boletos');
+                
+                let filtered = allBoletos.filter(b => {
+                    if (currentFilter === 'activos') return b.estadoRegistro === 'A';
+                    if (currentFilter === 'papelera') return b.estadoRegistro === '*';
+                    return false;
+                });
+
+                filtered.sort((a, b) => {
+                    let compareA, compareB;
+                    
+                    if (sortBy === 'boleto') {
+                        compareA = a.numeroBoleto;
+                        compareB = b.numeroBoleto;
+                    } else if (sortBy === 'pasajero') {
+                        compareA = (a.pasajeroNombre || '').toLowerCase();
+                        compareB = (b.pasajeroNombre || '').toLowerCase();
+                    } else if (sortBy === 'destino') {
+                        compareA = (a.destinoNombre || '').toLowerCase();
+                        compareB = (b.destinoNombre || '').toLowerCase();
+                    }
+
+                    if (sortOrder === 'asc') {
+                        return compareA > compareB ? 1 : -1;
+                    } else {
+                        return compareA < compareB ? 1 : -1;
+                    }
+                });
+
+                renderBoletos(filtered);
+            } catch (error) {
+                console.error('Error al cargar boletos:', error);
+            }
+        }
+
+        function renderBoletos(boletos) {
+            const container = document.getElementById('boletosList');
+            
+            if (boletos.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="2" y="3" width="20" height="14" rx="2"/>
+                            <line x1="8" y1="21" x2="16" y2="21"/>
+                            <line x1="12" y1="17" x2="12" y2="21"/>
+                        </svg>
+                        <h3>No hay boletos</h3>
+                        <p>${currentFilter === 'activos' ? 'Agrega un nuevo boleto usando el botón +' : 'No hay boletos en la papelera'}</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = boletos.map(b => `
+                <div class="boleto-item">
+                    <div class="boleto-info">
+                        <div class="boleto-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="2" y="3" width="20" height="14" rx="2"/>
+                                <line x1="8" y1="21" x2="16" y2="21"/>
+                                <line x1="12" y1="17" x2="12" y2="21"/>
+                            </svg>
+                        </div>
+                        <div class="boleto-details">
+                            <div class="boleto-numero">Boleto #${b.numeroBoleto}</div>
+                            <div class="boleto-pasajero">${b.pasajeroNombre || 'Sin pasajero'}</div>
+                            <div class="boleto-destino">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                                    <circle cx="12" cy="10" r="3"/>
+                                </svg>
+                                ${b.destinoNombre || 'Sin destino'}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="boleto-actions">
+                        <button class="btn-action btn-details" onclick="showDetails(${b.numeroBoleto})">Ver detalles</button>
+                        ${currentFilter === 'activos' ? `
+                            <button class="btn-action btn-edit" onclick="showEditModal(${b.numeroBoleto})">Editar</button>
+                            <button class="btn-action btn-delete" onclick="deleteBoleto(${b.numeroBoleto})">Eliminar</button>
+                        ` : `
+                            <button class="btn-action btn-reactivate" onclick="reactivateBoleto(${b.numeroBoleto})">Reactivar</button>
+                        `}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function showDetails(numero) {
+            const boleto = await getFromStore('boletos', numero);
+            const modal = document.getElementById('modalDetails');
+            const content = document.getElementById('detailsContent');
+            
+            const estadoTexto = boleto.estadoRegistro === 'A' ? 'Activo' : 
+                               boleto.estadoRegistro === 'I' ? 'Inactivo' : 'Eliminado';
+            
+            content.innerHTML = `
+                <div class="detail-row">
+                    <div class="detail-label">Número de Boleto</div>
+                    <div class="detail-value">#${boleto.numeroBoleto}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Fecha de Viaje</div>
+                    <div class="detail-value">${formatDate(boleto.fechaViaje)}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Pasajero</div>
+                    <div class="detail-value">${boleto.pasajeroNombre || 'N/A'}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Destino</div>
+                    <div class="detail-value">${boleto.destinoNombre || 'N/A'}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Asiento</div>
+                    <div class="detail-value">${boleto.asiento || 'N/A'}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Monto</div>
+                    <div class="detail-value">S/. ${boleto.monto || '0.00'}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Cajero</div>
+                    <div class="detail-value">${boleto.cajeroNombre || 'N/A'}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Estado</div>
+                    <div class="detail-value">${estadoTexto}</div>
+                </div>
+            `;
+            
+            modal.classList.add('show');
+        }
+
+        async function showEditModal(numero) {
+            currentEditNumero = numero;
+            const boleto = await getFromStore('boletos', numero);
+            
+            // Cargar listas
+            await loadSelects('edit');
+            
+            // Llenar formulario
+            document.getElementById('editFecha').value = boleto.fechaViaje || '';
+            document.getElementById('editPasajero').value = boleto.pasajero || '';
+            document.getElementById('editDestino').value = boleto.destino || '';
+            document.getElementById('editAsiento').value = boleto.asiento || '';
+            document.getElementById('editMonto').value = boleto.monto || '';
+            document.getElementById('editCajero').value = boleto.cajero || '';
+            
+            document.getElementById('modalEdit').classList.add('show');
+        }
+
+        async function saveEdit() {
+            const fecha = document.getElementById('editFecha').value;
+            const pasajero = parseInt(document.getElementById('editPasajero').value);
+            const destino = parseInt(document.getElementById('editDestino').value);
+            const asiento = document.getElementById('editAsiento').value.trim();
+            const monto = document.getElementById('editMonto').value;
+            const cajero = parseInt(document.getElementById('editCajero').value);
+            
+            if (!fecha || !pasajero || !destino || !asiento || !monto || !cajero) {
+                alert('Complete todos los campos');
+                return;
+            }
+
+            try {
+                const boleto = await getFromStore('boletos', currentEditNumero);
+                const pasajeroObj = await getFromStore('pasajeros', pasajero);
+                const destinoObj = await getFromStore('destinos', destino);
+                const cajeroObj = await getFromStore('cajeros', cajero);
+                
+                boleto.fechaViaje = fecha;
+                boleto.pasajero = pasajero;
+                boleto.pasajeroNombre = pasajeroObj.nombre;
+                boleto.destino = destino;
+                boleto.destinoNombre = destinoObj.nombre;
+                boleto.asiento = asiento;
+                boleto.monto = monto;
+                boleto.cajero = cajero;
+                boleto.cajeroNombre = cajeroObj.nombre;
+                
+                await addToStore('boletos', boleto);
+                
+                closeModal('modalEdit');
+                loadBoletos();
+                alert('Boleto actualizado exitosamente');
+            } catch (error) {
+                console.error('Error al guardar:', error);
+                alert('Error al guardar los cambios');
+            }
+        }
+
+        async function deleteBoleto(numero) {
+            if (!confirm('¿Está seguro de eliminar este boleto?')) return;
+            
+            try {
+                const boleto = await getFromStore('boletos', numero);
+                boleto.estadoRegistro = '*';
+                await addToStore('boletos', boleto);
+                loadBoletos();
+                alert('Boleto eliminado');
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al eliminar');
+            }
+        }
+
+        async function reactivateBoleto(numero) {
+            if (!confirm('¿Desea reactivar este boleto?')) return;
+            
+            try {
+                const boleto = await getFromStore('boletos', numero);
+                boleto.estadoRegistro = 'A';
+                await addToStore('boletos', boleto);
+                loadBoletos();
+                alert('Boleto reactivado exitosamente');
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al reactivar');
+            }
+        }
+
+        async function showCreateModal() {
+            await loadSelects('create');
+            document.getElementById('createNumero').value = '';
+            document.getElementById('createFecha').value = '';
+            document.getElementById('createAsiento').value = '';
+            document.getElementById('createMonto').value = '';
+            document.getElementById('modalCreate').classList.add('show');
+        }
+
+        async function loadSelects(prefix) {
+            const pasajeros = await getActiveRecords('pasajeros');
+            const destinos = await getActiveRecords('destinos');
+            const cajeros = await getActiveRecords('cajeros');
+            
+            const pasajeroSelect = document.getElementById(prefix + 'Pasajero');
+            const destinoSelect = document.getElementById(prefix + 'Destino');
+            const cajeroSelect = document.getElementById(prefix + 'Cajero');
+            
+            pasajeroSelect.innerHTML = '<option value="">Seleccione un pasajero</option>' +
+                pasajeros.map(p => `<option value="${p.codigo}">${p.nombre}</option>`).join('');
+            
+            destinoSelect.innerHTML = '<option value="">Seleccione un destino</option>' +
+                destinos.map(d => `<option value="${d.codigo}">${d.nombre}</option>`).join('');
+            
+            cajeroSelect.innerHTML = '<option value="">Seleccione un cajero</option>' +
+                cajeros.map(c => `<option value="${c.codigo}">${c.nombre}</option>`).join('');
+        }
+
+        async function createBoleto() {
+            const numero = parseInt(document.getElementById('createNumero').value);
+            const fecha = document.getElementById('createFecha').value;
+            const pasajero = parseInt(document.getElementById('createPasajero').value);
+            const destino = parseInt(document.getElementById('createDestino').value);
+            const asiento = document.getElementById('createAsiento').value.trim();
+            const monto = document.getElementById('createMonto').value;
+            const cajero = parseInt(document.getElementById('createCajero').value);
+            
+            if (!numero || !fecha || !pasajero || !destino || !asiento || !monto || !cajero) {
+                alert('Complete todos los campos');
+                return;
+            }
+
+            try {
+                const existe = await getFromStore('boletos', numero);
+                if (existe) {
+                    alert('Ya existe un boleto con ese número');
+                    return;
+                }
+
+                const pasajeroObj = await getFromStore('pasajeros', pasajero);
+                const destinoObj = await getFromStore('destinos', destino);
+                const cajeroObj = await getFromStore('cajeros', cajero);
+
+                await addToStore('boletos', {
+                    numeroBoleto: numero,
+                    fechaViaje: fecha,
+                    pasajero: pasajero,
+                    pasajeroNombre: pasajeroObj.nombre,
+                    destino: destino,
+                    destinoNombre: destinoObj.nombre,
+                    asiento: asiento,
+                    monto: monto,
+                    cajero: cajero,
+                    cajeroNombre: cajeroObj.nombre,
+                    estadoRegistro: 'A'
+                });
+
+                closeModal('modalCreate');
+                loadBoletos();
+                alert('Boleto creado exitosamente');
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al crear boleto');
+            }
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('show');
+        }
+
+        function filterBoletos() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const items = document.querySelectorAll('.boleto-item');
+            
+            items.forEach(item => {
+                const text = item.textContent.toLowerCase();
+                item.style.display = text.includes(search) ? 'flex' : 'none';
+            });
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return 'N/A';
+            const date = new Date(dateStr + 'T00:00:00');
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            return date.toLocaleDateString('es-PE', options);
+        }
+
+        loadBoletos();
     </script>
 </body>
 </html>
